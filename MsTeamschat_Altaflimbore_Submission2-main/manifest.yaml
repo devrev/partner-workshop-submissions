@@ -1,0 +1,30 @@
+version: "2"
+name: "MS Teams Chat Import"
+description: "Import chats from public channels in Microsoft Teams."
+
+# This is the name displayed in DevRev where the Snap-In takes actions using the token of this service account.
+service_account:
+  display_name: MS Teams Chat Import
+
+keyrings:
+  organization:
+    - name: msteams_connection
+      display_name: MS Teams Connection
+      description: MS Teams Authentication Token
+      types:
+        - snap_in_secret
+
+functions:
+  - name: command_handler
+    description: function to import chats from MS Teams public channels
+
+commands:
+  - name: import_chats
+    namespace: devrev
+    description: Command to import chats from a MS Teams public channel.
+    surfaces:
+      - surface: discussions
+        object_types:
+          - part
+    usage_hint: "[Channel_URL]"
+    function: command_handler
