@@ -1,0 +1,123 @@
+{
+    "type": "custom_type_fragment",
+    "deprecated": false,
+    "description": "Customer Support Automation for FutureScape",
+    "fields": [
+        {
+            "field_type": "enum",
+            "allowed_values": [
+                "Enterprise",
+                "SMB",
+                "Government"
+            ],
+            "description": "Defines the division of the customer account",
+            "name": "division",
+            "is_filterable": true,
+            "ui": {
+                "display_name": "Division"
+            }
+        },
+        {
+            "name": "area",
+            "field_type": "enum",
+            "allowed_values": [
+                "North",
+                "South",
+                "East",
+                "West"
+            ],
+            "description": "Defines the geographical area of the customer",
+            "is_filterable": true,
+            "ui": {
+                "display_name": "Area"
+            }
+        },
+        {
+            "name": "support_group",
+            "field_type": "tokens",
+            "description": "Auto-assigned support group based on division",
+            "ui": {
+                "display_name": "Support Group"
+            }
+        },
+        {
+            "name": "assigned_agent",
+            "field_type": "tokens",
+            "description": "Support agent assigned in a load-balanced way",
+            "ui": {
+                "display_name": "Assigned Agent"
+            }
+        },
+        {
+            "name": "ticket_id",
+            "field_type": "tokens",
+            "description": "Unique identifier for the support ticket",
+            "ui": {
+                "display_name": "Ticket ID"
+            }
+        },
+        {
+            "name": "conversation_id",
+            "field_type": "tokens",
+            "description": "Unique identifier for the customer conversation",
+            "ui": {
+                "display_name": "Conversation ID"
+            }
+        },
+        {
+            "name": "ticket_count",
+            "field_type": "int",
+            "description": "Total number of tickets created for the division",
+            "ui": {
+                "display_name": "Ticket Count"
+            }
+        }
+    ],
+    "conditions": [
+        {
+            "effects": [
+                {
+                    "fields": [
+                        "custom_fields.area"
+                    ],
+                    "allowed_values": [
+                        "North",
+                        "South"
+                    ]
+                }
+            ],
+            "expression": "custom_fields.division == 'Enterprise'"
+        },
+        {
+            "effects": [
+                {
+                    "fields": [
+                        "custom_fields.area"
+                    ],
+                    "allowed_values": [
+                        "East",
+                        "West"
+                    ]
+                }
+            ],
+            "expression": "custom_fields.division == 'SMB'"
+        },
+        {
+            "effects": [
+                {
+                    "fields": [
+                        "custom_fields.area"
+                    ],
+                    "allowed_values": [
+                        "North",
+                        "West"
+                    ]
+                }
+            ],
+            "expression": "custom_fields.division == 'Government'"
+        }
+    ],
+    "subtype": "support_ticket_futurescape",
+    "subtype_display_name": "Support Ticket (futurescape)",
+    "leaf_type": "issue"
+}
