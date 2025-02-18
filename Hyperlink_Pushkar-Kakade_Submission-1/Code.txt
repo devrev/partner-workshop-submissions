@@ -1,0 +1,89 @@
+{
+
+    "type": "custom_type_fragment",
+
+    "deprecated": false,
+
+    "description": "Custom issue type for optimized workload distribution",
+
+    "fields": [
+
+        {
+
+            "field_type": "enum",
+
+            "allowed_values": ["Office-Based", "Work-From-Home", "Mixed-Mode"],
+
+            "description": "Specifies whether the issue is linked to an office-based, remote, or mixed-mode team.",
+
+            "name": "location_type",
+
+            "is_filterable": true,
+
+            "ui": {
+
+                "display_name": "Work Location Type"
+
+            }
+
+        },
+
+        {
+
+            "field_type": "int",
+
+            "description": "Indicates the number of team members assigned to this task or issue.",
+
+            "name": "team_size",
+
+            "ui": {
+
+                "display_name": "Team Size"
+
+            }
+
+        },
+
+        {
+
+            "field_type": "tokens",
+
+            "description": "Holds the department ID related to this issue.",
+
+            "name": "department_id",
+
+            "ui": {
+
+                "display_name": "Department"
+
+            }
+
+        },
+
+        {
+
+            "field_type": "tokens",
+
+            "description": "Tracks the assigned owner of this issue using an optimized distribution method.",
+
+            "name": "assigned_owner",
+
+            "ui": {
+
+                "display_name": "Assigned Owner"
+
+            }
+
+        }
+
+    ],
+
+    "subtype": "load_balanced_issue",
+
+    "subtype_display_name": "Load Balanced Issue",
+
+    "leaf_type": "issue"
+
+}
+
+ 
