@@ -1,0 +1,62 @@
+version: "2"
+
+name: Pramodhm112 Devtools Devrev Adaas
+description: Pramodhm112 Devtools Devrev Adaas
+
+# Service account name as it will appear in DevRev
+service_account:
+  display_name: Pramodhm112 Devtools Devrev Adaas Bot
+
+functions:
+  - name: extraction
+    description: "Extraction function for Pramodhm112 Devtools Devrev Adaas"
+
+  - name: install_initial_domain_mapping
+    description: "Create blueprint and install initial domain mapping"
+
+  - name: federatedSearch
+    description: "Perform federated search on Google Drive"
+  - name: initialIndexDrive
+    description: "Perform initial indexing of Google Drive"
+  - name: incrementalUpdateDriveIndex
+    description: "Incrementally update the Google Drive index"
+  - name: searchDriveIndex
+    description: "Search metadata from the local Google Drive index"
+  - name: secureDriveSearch
+    description: "Enforce user access with domain-wide delegated search"
+  - name: enforcePermissionsSearch
+    description: "Enforce Google Workspace permissions in search"
+  - name: metadataExtraction
+    description: "Extract metadata from external documents"
+  - name: dataExtraction
+    description: "Extract structured data from raw inputs"
+  - name: attachmentsExtraction
+    description: "Extract or retrieve attachments from sources"
+
+  # Example keyring for storing Google credentials (if needed)
+  - id: google-credentials
+    name: Google Credentials
+    description: "Holds service account credentials for Google"
+    kind: "Secret"
+    is_subdomain: true
+    secret_config:
+      fields:
+        - id: client_email
+          name: Google Client Email
+          description: "Service account email"
+        - id: private_key
+          name: Google Private Key
+          description: "Service account private key"
+
+imports:
+  # Example: referencing your code as an 'extractor' SnapIn
+  - slug: pramodhm112-devtools-devrev-adaas-extractor
+    display_name: Pramodhm112 Devtools Devrev Adaas
+    description: Pramodhm112 Devtools Devrev Adaas
+    extractor_function: extraction
+    allowed_connection_types:
+      - example-connection
+
+hooks:
+  - type: activate
+    function: install_initial_domain_mapping

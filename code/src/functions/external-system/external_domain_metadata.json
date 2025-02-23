@@ -1,0 +1,80 @@
+{
+  "schema_version": "v0.2.0",
+  "record_types": {
+    "files": {
+      "name": "Google Drive Files",
+      "is_loadable": true,
+      "fields": {
+        "name": {
+          "name": "Name",
+          "is_required": true,
+          "type": "text",
+          "text": {
+            "min_length": 1
+          }
+        },
+        "mimeType": {
+          "name": "MIME Type",
+          "is_required": true,
+          "type": "text"
+        },
+        "webViewLink": {
+          "name": "Web View Link",
+          "is_required": false,
+          "type": "text"
+        },
+        "description": {
+          "name": "Description",
+          "is_required": false,
+          "type": "rich_text"
+        },
+        "owner": {
+          "name": "Owner",
+          "is_required": true,
+          "type": "reference",
+          "reference": {
+            "refers_to": {
+              "#record:users": {}
+            }
+          }
+        },
+        "parents": {
+          "name": "Parent Folders",
+          "is_required": false,
+          "type": "array",
+          "array": {
+            "type": "text"
+          }
+        }
+      }
+    },
+    "users": {
+      "name": "Users",
+      "fields": {
+        "emailAddress": {
+          "name": "Email",
+          "is_required": true,
+          "type": "text"
+        },
+        "displayName": {
+          "name": "Display Name",
+          "is_required": true,
+          "type": "text",
+          "text": {
+            "min_length": 1
+          }
+        },
+        "photoLink": {
+          "name": "Photo URL",
+          "is_required": false,
+          "type": "text"
+        },
+        "permissionId": {
+          "name": "Permission ID",
+          "is_required": false,
+          "type": "text"
+        }
+      }
+    }
+  }
+}
