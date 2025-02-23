@@ -12,3 +12,14 @@ Guidelines:
 - Screenshots of the setup and documentation are not required.
 - There are no additional requirements.
 - You should put the code in the repo and share it with us.
+
+
+Environment Variables
+
+DEV_ORG=partner-devtools-pramodhm112
+USER_EMAIL=
+GOOGLE_CLIENT_EMAIL="service-account@my-project.iam.gserviceaccount.com"
+GOOGLE_PRIVATE_KEY=""
+GREENLIST_FOLDER_IDS=""
+REDLIST_FOLDER_IDS=""
+REDLIST_FILENAME_PATTERNS=""
