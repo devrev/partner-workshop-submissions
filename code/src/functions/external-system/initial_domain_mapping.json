@@ -1,0 +1,134 @@
+{
+  "additional_mappings": {
+    "record_type_mappings": {
+      "files": {
+        "default_mapping": {
+          "object_type": "document"
+        },
+        "possible_record_type_mappings": [
+          {
+            "devrev_leaf_type": "document",
+            "forward": true,
+            "reverse": true,
+            "shard": {
+              "constructed_custom_fields": {
+                "ext_object_type": {
+                  "field_descriptor": {
+                    "allowed_values": ["GoogleDriveFile"],
+                    "db_name": "ext_object_type",
+                    "default_value": "GoogleDriveFile",
+                    "description": "Google Drive file type",
+                    "field_type": "enum",
+                    "is_filterable": true,
+                    "is_required": true,
+                    "name": "ext_object_type",
+                    "ui": {
+                      "display_name": "Google Drive File Type",
+                      "is_hidden_during_create": true,
+                      "is_read_only": true
+                    }
+                  },
+                  "transformation_method": {
+                    "can_apply_to_null": false,
+                    "custom_field_type": {
+                      "allowed_values": ["GoogleDriveFile"],
+                      "db_name": "drive_file_type",
+                      "field_type": "enum",
+                      "name": "drive_file_type"
+                    },
+                    "forward_jq": "\"GoogleDriveFile\"",
+                    "transformation_method": "use_raw_jq",
+                    "use_primary_input": false
+                  }
+                }
+              },
+              "devrev_leaf_type": {
+                "object_type": "document"
+              },
+              "mode": "create_shard",
+              "stock_field_mappings": {
+                "title": {
+                  "forward": true,
+                  "primary_external_field": "name",
+                  "reverse": true,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                },
+                "body": {
+                  "forward": true,
+                  "primary_external_field": "description",
+                  "reverse": true,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                },
+                "created_by_id": {
+                  "forward": true,
+                  "primary_external_field": "owner",
+                  "reverse": true,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                },
+                "web_link": {
+                  "forward": true,
+                  "primary_external_field": "webViewLink",
+                  "reverse": false,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                },
+                "mime_type": {
+                  "forward": true,
+                  "primary_external_field": "mimeType",
+                  "reverse": false,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "users": {
+        "default_mapping": {
+          "object_type": "devu"
+        },
+        "possible_record_type_mappings": [
+          {
+            "devrev_leaf_type": "devu",
+            "forward": true,
+            "reverse": false,
+            "shard": {
+              "constructed_custom_fields": {},
+              "devrev_leaf_type": {
+                "object_type": "devu"
+              },
+              "mode": "create_shard",
+              "stock_field_mappings": {
+                "display_name": {
+                  "forward": true,
+                  "primary_external_field": "displayName",
+                  "reverse": false,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                },
+                "email": {
+                  "forward": true,
+                  "primary_external_field": "emailAddress",
+                  "reverse": false,
+                  "transformation_method": {
+                    "transformation_method": "use_directly"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
