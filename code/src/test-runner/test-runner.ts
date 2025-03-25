@@ -1,21 +1,25 @@
-// src/test-runner/test-runner.ts
-import * as jest from 'jest';
+import * as dotenv from 'dotenv';
 
-// This function runs the Jest tests
-async function runTestSuite() {
-  const result = await jest.runCLI({
-    _: ['.'], $0: 'jest'
-  }, ['.']);
-  if (result.results.numFailedTests > 0) {
-    console.error('Tests failed.');
-    process.exit(1);
-  } else {
-    console.log('Tests passed.');
-    process.exit(0);
-  }
+import { functionFactory, FunctionFactoryType } from '../function-factory';
+
+export interface TestRunnerProps {
+  functionName: FunctionFactoryType;
+  fixturePath: string;
 }
 
-// Export runTestSuite as testRunner
-export const testRunner = runTestSuite;
+export const testRunner = async ({ functionName, fixturePath }: TestRunnerProps) => {
+  //Since we were not using the env anywhere its not require to load it
+  dotenv.config();
 
+  if (!functionFactory[functionName]) {
+    console.error(`${functionName} is not found in the functionFactory`);
+    console.error('Add your function to the function-factory.ts file');
+    throw new Error('Function is not found in the functionFactory');
+  }
 
+const run = functionFactory[functionName];
+
+const eventFixture = require(`../fixtures/${fixturePath}`);
+
+  await run(eventFixture);
+};

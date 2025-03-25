@@ -1,130 +1,91 @@
 version: "2"
-name: "DevRev Automation"
-description: "Automation for ticket routing, customer account filtering, and visualizing ticket distribution"
-
-# The service account under which the Snap-In will operate
+name: InnovateNow Ticketing Automation
+description: |
+  This snap-in automates ticket routing to project-specific support agents,
+  sets agent visibility, and generates reports visualizing ticket distribution
+  across various projects.
 service_account:
-  display_name: "Innovate Now Bot"
+  display_name: "InnovateNow Ticketing Bot"
 
-# Define organization-level inputs for filtering and milestone dynamic dependencies
 inputs:
   organization:
-    - name: "project"
-      description: "Project to filter the customer accounts"
-      field_type: select
+    - name: project_type
+      field_type: enum
+      allowed_values:
+        - "Web dev"
+        - "ML"
+        - "Networking"
+        - "Fund Raising"
+      description: The type of project for ticket assignment.
       ui:
-        display_name: "Select Project"
-        options:
-          - label: "Project 1"
-            value: "project_1"
-          - label: "Project 2"
-            value: "project_2"
-        required: true
-
-    - name: "milestone"
-      description: "Milestone dynamically dependent on selected project"
-      field_type: select
+        display_name: Project Type
+    - name: agent_group
+      field_type: enum
+      allowed_values:
+        - "Web Dev Support"
+        - "ML Support"
+        - "Networking Support"
+        - "Fund Raising Support"
+      description: The support group to which the ticket should be routed.
       ui:
-        display_name: "Select Milestone"
-        options:
-          - label: "Milestone 1"
-            value: "milestone_1"
-          - label: "Milestone 2"
-            value: "milestone_2"
-        required: true
+        display_name: Support Agent Group
 
-# Event source: Define the DevRev events we are interested in (e.g., ticket and conversation creation)
 event_sources:
   organization:
-    - name: devrev-event-source
-      description: "Event source listening to DevRev events."
-      display_name: "DevRev Events Listener"
-      type: devrev-webhook
+    - name: ticket-event-source
+      type: flow-custom-webhook
+      description: Event source for ticket creation and updates.
       config:
-        event_types:
-          - conversation_created
-          - ticket_created
-          - work_created  # You might also want to capture work creation events.
+        policy: |
+          package rego
+          signature := crypto.hmac.sha256(base64.decode(input.request.body_raw), input.parameters.secret)
+          expected_header := sprintf("sha256=%v", [signature])
+          signature_header_name := "X-Hub-Signature-256"
+          status_code = 200 {
+            input.request.headers[signature_header_name] == expected_header
+          } else = 401 {
+            true
+          }
+          output = {"event": body, "event_key": event_key} {
+            status_code == 200
+            body := input.request.body
+            event_key := "ticket-event"
+          } else = {"response": response} {
+            response := {"status_code": status_code}
+          }
+        parameters:
+          secret: SECRET_TOKEN
+      setup_instructions: |
+        Please copy the source URL from here: 
+        URL: `{{source.trigger_url}}`
+        Secret: `{{source.config.parameters.secret}}`
 
-# Functions: Logic to handle specific tasks, such as routing tickets and generating charts
 functions:
-  - name: route-ticket
-    description: "Route conversations and tickets to project-specific agents"
-    handler: src/functions/route-tickets/index.routeConversationTicket
-    inputs:
-      - name: ticket_id
-        type: text
-        description: "The ID of the created ticket"
-      - name: project
-        type: text
-        description: "Project under which the ticket was created"
-    outputs:
-      - name: agent_assigned
-        type: text
-        description: "The agent assigned to the ticket"
-    config:
-      timeout: "30s"
+  - name: route_ticket
+    description: Routes newly created tickets to the appropriate project-specific support agents.
+    handler: functions/route_ticket/index.ts
+  - name: set_agent_visibility
+    description: Ensures that only the assigned agent can see their specific ticket.
+    handler: functions/set_agent_visibility/index.ts
+  - name: generate_ticket_report
+    description: Generates a report visualizing the distribution of tickets across different projects.
+    handler: functions/generate_ticket_report/index.ts
 
-  - name: filter-customer-accounts
-    description: "Filter customer accounts by project and milestone"
-    handler: src/functions/filter-customer-accounts/index.filterCustomerAccounts
-    inputs:
-      - name: project
-        type: text
-        description: "Project ID for filtering"
-      - name: milestone
-        type: text
-        description: "Milestone ID for filtering"
-    outputs:
-      - name: filtered_accounts
-        type: array
-        description: "List of customer accounts filtered by project and milestone"
-    config:
-      timeout: "30s"
-
-  - name: generate-ticket-chart
-    description: "Generates a bar chart visualizing the distribution of tickets across projects"
-    handler: src/functions/generate-ticket-chart/index.generateTicketChart
-    inputs:
-      - name: project
-        type: text
-        description: "Project ID for which the chart needs to be generated"
-    outputs:
-      - name: chart_image_url
-        type: text
-        description: "URL of the generated bar chart"
-    config:
-      timeout: "30s"
-
-# Automations: Define the actions triggered by specific events
 automations:
-  - name: handle_conversation_ticket_creation
-    description: "Automation triggered when a new conversation or ticket is created"
-    source: devrev-event-source
+  - name: ticket-routing-automation
+    source: ticket-event-source
     event_types:
-      - conversation_created
-      - ticket_created
-    function: route-ticket
-    inputs:
-      ticket_id: "${event.data.ticket_id}"
-      project: "${event.data.project}"
+      - custom:ticket-created
+    function: route_ticket
 
-  - name: filter_customer_accounts_automation
-    description: "Filter customer accounts based on project and milestone selection"
-    source: devrev-event-source
+  - name: agent-visibility-automation
+    source: ticket-event-source
     event_types:
-      - work_created
-    function: filter-customer-accounts
-    inputs:
-      project: "${event.data.project}"
-      milestone: "${event.data.milestone}"
+      - custom:ticket-assigned
+    function: set_agent_visibility
 
-  - name: generate_ticket_distribution_chart_automation
-    description: "Generate a ticket distribution chart for a project"
-    source: devrev-event-source
+  - name: ticket-report-automation
+    source: ticket-event-source
     event_types:
-      - work_created
-    function: generate-ticket-chart
-    inputs:
-      project: "${event.data.project}"
-
+      - custom:ticket-created
+    function: generate_ticket_report
