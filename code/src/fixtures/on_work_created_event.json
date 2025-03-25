@@ -1,0 +1,13 @@
+{
+  "event": {
+    "type": "work_created",
+    "data": {
+      "ticket_id": "ticket123",
+      "project": "project_1",
+      "milestone": "milestone_1",
+      "customer_id": "customer123",
+      "created_at": "2025-03-17T12:00:00Z"
+    }
+  }
+}
+
