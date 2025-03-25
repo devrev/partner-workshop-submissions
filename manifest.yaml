@@ -1,0 +1,91 @@
+version: "2"
+name: InnovateNow Ticketing Automation
+description: |
+  This snap-in automates ticket routing to project-specific support agents,
+  sets agent visibility, and generates reports visualizing ticket distribution
+  across various projects.
+service_account:
+  display_name: "InnovateNow Ticketing Bot"
+
+inputs:
+  organization:
+    - name: project_type
+      field_type: enum
+      allowed_values:
+        - "Web dev"
+        - "ML"
+        - "Networking"
+        - "Fund Raising"
+      description: The type of project for ticket assignment.
+      ui:
+        display_name: Project Type
+    - name: agent_group
+      field_type: enum
+      allowed_values:
+        - "Web Dev Support"
+        - "ML Support"
+        - "Networking Support"
+        - "Fund Raising Support"
+      description: The support group to which the ticket should be routed.
+      ui:
+        display_name: Support Agent Group
+
+event_sources:
+  organization:
+    - name: ticket-event-source
+      type: flow-custom-webhook
+      description: Event source for ticket creation and updates.
+      config:
+        policy: |
+          package rego
+          signature := crypto.hmac.sha256(base64.decode(input.request.body_raw), input.parameters.secret)
+          expected_header := sprintf("sha256=%v", [signature])
+          signature_header_name := "X-Hub-Signature-256"
+          status_code = 200 {
+            input.request.headers[signature_header_name] == expected_header
+          } else = 401 {
+            true
+          }
+          output = {"event": body, "event_key": event_key} {
+            status_code == 200
+            body := input.request.body
+            event_key := "ticket-event"
+          } else = {"response": response} {
+            response := {"status_code": status_code}
+          }
+        parameters:
+          secret: SECRET_TOKEN
+      setup_instructions: |
+        Please copy the source URL from here: 
+        URL: `{{source.trigger_url}}`
+        Secret: `{{source.config.parameters.secret}}`
+
+functions:
+  - name: route_ticket
+    description: Routes newly created tickets to the appropriate project-specific support agents.
+    handler: functions/route_ticket/index.ts
+  - name: set_agent_visibility
+    description: Ensures that only the assigned agent can see their specific ticket.
+    handler: functions/set_agent_visibility/index.ts
+  - name: generate_ticket_report
+    description: Generates a report visualizing the distribution of tickets across different projects.
+    handler: functions/generate_ticket_report/index.ts
+
+automations:
+  - name: ticket-routing-automation
+    source: ticket-event-source
+    event_types:
+      - custom:ticket-created
+    function: route_ticket
+
+  - name: agent-visibility-automation
+    source: ticket-event-source
+    event_types:
+      - custom:ticket-assigned
+    function: set_agent_visibility
+
+  - name: ticket-report-automation
+    source: ticket-event-source
+    event_types:
+      - custom:ticket-created
+    function: generate_ticket_report

@@ -1,0 +1,15 @@
+{
+    "event_type": "ticket_created",
+    "ticket": {
+      "id": "ticket-12345",
+      "custom_fields": {
+        "project": "web dev",
+        "milestone": "req gather"
+      }
+    },
+    "user": {
+      "id": "user-01",
+      "name": "Jane Doe"
+    }
+  }
+  
