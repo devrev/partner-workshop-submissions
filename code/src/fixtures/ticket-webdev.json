@@ -1,0 +1,73 @@
+[{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "Web dev",
+      "milestone": "req gather"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+},
+
+{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "Web dev",
+      "milestone": "development"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+},
+
+{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "web dev",
+      "milestone": "deploy"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+},
+  
+{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "ML",
+      "milestone": "data collection"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+},
+
+{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "ML",
+      "milestone": "model training"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+},
+
+{
+    "id": "ticket-12345",
+    "custom_fields": {
+      "project": "ML",
+      "milestone": "validating"
+    },
+    "assignee": {
+      "id": "agent-01",
+      "name": "John Doe"
+    }
+}]
+  
+  
